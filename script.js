@@ -28,6 +28,6 @@ function render() {
     tableHtml += '</table>';
 
     // Füge den HTML-Code in den Container ein
-    document.getElementById('container').innerHTML = tableHtml;
+    document.getElementById('content').innerHTML = tableHtml;
 }
 
