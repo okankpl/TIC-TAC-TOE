@@ -11,6 +11,11 @@ th, td {
     font-size: 50px;
     border: 8px solid white;
     border-collapse: collapse;
+    cursor: pointer;
+}
+
+td:hover {
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 h1 {
