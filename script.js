@@ -158,3 +158,4 @@ function drawWinningLine(combination) {
   line.style.transformOrigin = 'top left';
   contentDiv.appendChild(line);
 }
+
