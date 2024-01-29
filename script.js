@@ -1,99 +1,104 @@
-let fields = [
-  null,
-  null,
-  null,
-  null,
-  null,
-  null,
-  null,
-  null,
-  null,
-];
+let fields = [null, null, null, null, null, null, null, null, null];
 
 const WINNING_COMBINATIONS = [
-  [0, 1, 2], [3, 4, 5], [6, 7, 8], // horizontal
-  [0, 3, 6], [1, 4, 7], [2, 5, 8], // vertical
-  [0, 4, 8], [2, 4, 6], // diagonal
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8], // horizontal
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8], // vertical
+  [0, 4, 8],
+  [2, 4, 6], // diagonal
 ];
 
-let currentPlayer = 'circle';
-
+let currentPlayer = "circle";
 
 function init() {
   render();
 }
 
 function render() {
-  const contentDiv = document.getElementById('content');
+  const contentDiv = document.getElementById("content");
+  const playerIndicatorDiv = document.getElementById("player-indicator");
+
+  // Generate player indicator HTML with dynamic symbol
+  const playerIndicatorHtml = `
+    <div id="player-indicator">
+      <h2>Current Player:</h2> ${
+        currentPlayer === "circle" ? generateCircleSVG() : generateCrossSVG()
+      }
+    </div>
+  `;
 
   // Generate table HTML
-  let tableHtml = '<table>';
+  let tableHtml = "<table>";
   for (let i = 0; i < 3; i++) {
-      tableHtml += '<tr>';
-      for (let j = 0; j < 3; j++) {
-          const index = i * 3 + j;
-          let symbol = '';
-          if (fields[index] === 'circle') {
-              symbol = generateCircleSVG();
-          } else if (fields[index] === 'cross') {
-              symbol = generateCrossSVG();
-          }
-          tableHtml += `<td onclick="handleClick(this, ${index})">${symbol}</td>`;
+    tableHtml += "<tr>";
+    for (let j = 0; j < 3; j++) {
+      const index = i * 3 + j;
+      let symbol = "";
+      if (fields[index] === "circle") {
+        symbol = generateCircleSVG();
+      } else if (fields[index] === "cross") {
+        symbol = generateCrossSVG();
       }
-      tableHtml += '</tr>';
+      tableHtml += `<td onclick="handleClick(this, ${index})">${symbol}</td>`;
+    }
+    tableHtml += "</tr>";
   }
-  tableHtml += '</table>';
+  tableHtml += "</table>";
 
-  // Set table HTML to contentDiv
-  contentDiv.innerHTML = tableHtml;
+  // Set player indicator and table HTML to contentDiv
+  contentDiv.innerHTML = playerIndicatorHtml + tableHtml;
 }
 
-function restartGame(){
-  fields = [
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-  ];
+function restartGame() {
+  fields = [null, null, null, null, null, null, null, null, null];
   render();
 }
 
 function handleClick(cell, index) {
   if (fields[index] === null) {
-      fields[index] = currentPlayer;
-      cell.innerHTML = currentPlayer === 'circle' ? generateCircleSVG() : generateCrossSVG();
-      cell.onclick = null;
-      currentPlayer = currentPlayer === 'circle' ? 'cross' : 'circle';
+    fields[index] = currentPlayer;
+    cell.innerHTML =
+      currentPlayer === "circle" ? generateCircleSVG() : generateCrossSVG();
+    cell.onclick = null;
 
-      if (isGameFinished()) {
-          const winCombination = getWinningCombination();
-          drawWinningLine(winCombination);
-      }
+    if (isGameFinished()) {
+      const winCombination = getWinningCombination();
+      drawWinningLine(winCombination);
+    }
+
+    // Update currentPlayer after making a move
+    currentPlayer = currentPlayer === "circle" ? "cross" : "circle";
+
+    // Re-render the board to update the player indicator
+    render();
   }
 }
 
 function isGameFinished() {
-  return fields.every((field) => field !== null) || getWinningCombination() !== null;
+  return (
+    fields.every((field) => field !== null) || getWinningCombination() !== null
+  );
 }
 
 function getWinningCombination() {
   for (let i = 0; i < WINNING_COMBINATIONS.length; i++) {
-      const [a, b, c] = WINNING_COMBINATIONS[i]; // [0, 1, 2]
-      if (fields[a] === fields[b] && fields[b] === fields[c] && fields[a] !== null) {
-          return WINNING_COMBINATIONS[i];
-      }
+    const [a, b, c] = WINNING_COMBINATIONS[i]; // [0, 1, 2]
+    if (
+      fields[a] === fields[b] &&
+      fields[b] === fields[c] &&
+      fields[a] !== null
+    ) {
+      return WINNING_COMBINATIONS[i];
+    }
   }
   return null;
 }
 
-
 function generateCircleSVG() {
-  const color = '#00B0EF';
+  const color = "#00B0EF";
   const width = 70;
   const height = 70;
 
@@ -104,9 +109,8 @@ function generateCircleSVG() {
           </svg>`;
 }
 
-
 function generateCrossSVG() {
-  const color = '#FFC000';
+  const color = "#FFC000";
   const width = 70;
   const height = 70;
 
@@ -128,34 +132,39 @@ function generateCrossSVG() {
   return svgHtml;
 }
 
-
-
 function drawWinningLine(combination) {
-  const lineColor = '#ffffff';
+  const lineColor = "#ffffff";
   const lineWidth = 5;
 
-  const startCell = document.querySelectorAll('td')[combination[0]];
-  const endCell = document.querySelectorAll('td')[combination[2]];
+  const startCell = document.querySelectorAll("td")[combination[0]];
+  const endCell = document.querySelectorAll("td")[combination[2]];
   const startRect = startCell.getBoundingClientRect();
   const endRect = endCell.getBoundingClientRect();
 
-  const contentDiv = document.getElementById('content');
+  const contentDiv = document.getElementById("content");
   const contentRect = contentDiv.getBoundingClientRect();
 
   const lineLength = Math.sqrt(
-    Math.pow(endRect.left - startRect.left, 2) + Math.pow(endRect.top - startRect.top, 2)
+    Math.pow(endRect.left - startRect.left, 2) +
+      Math.pow(endRect.top - startRect.top, 2)
   );
-  const lineAngle = Math.atan2(endRect.top - startRect.top, endRect.left - startRect.left);
+  const lineAngle = Math.atan2(
+    endRect.top - startRect.top,
+    endRect.left - startRect.left
+  );
 
-  const line = document.createElement('div');
-  line.style.position = 'absolute';
+  const line = document.createElement("div");
+  line.style.position = "absolute";
   line.style.width = `${lineLength}px`;
   line.style.height = `${lineWidth}px`;
   line.style.backgroundColor = lineColor;
-  line.style.top = `${startRect.top + startRect.height / 2 - lineWidth / 2 - contentRect.top}px`;
-  line.style.left = `${startRect.left + startRect.width / 2 - contentRect.left}px`;
+  line.style.top = `${
+    startRect.top + startRect.height / 2 - lineWidth / 2 - contentRect.top
+  }px`;
+  line.style.left = `${
+    startRect.left + startRect.width / 2 - contentRect.left
+  }px`;
   line.style.transform = `rotate(${lineAngle}rad)`;
-  line.style.transformOrigin = 'top left';
+  line.style.transformOrigin = "top left";
   contentDiv.appendChild(line);
 }
-
